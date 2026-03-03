@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Full Stack Automation Template
 
-## Getting Started
+A reusable template for **automation + optional UI** projects. You can build **automation only**, **automation with a frontend** (UI reads from temp files), or **automation + frontend + database** (shared Supabase). The repo includes an AI-oriented entry point so an agent can scope and build from your description.
 
-First, run the development server:
+## Purpose
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Automation:** Workflows and tools (WAT model: markdown workflows + scripts in `automation/`). Output can go to `.tmp/` or to a shared database.
+- **Frontend (optional):** Next.js app for a UI; can read automation output from the filesystem (same machine) or from a database.
+- **Database (optional):** Supabase for shared data and auth when you choose the full setup.
+- **AI guidance:** Tag `@AGENT.md` with your app idea; the agent will ask a few questions (design, setup choice), then follow conventions to build.
+
+## Structure
+
+```
+full-stack-automation-template/
+├── AGENT.md           # Entry point for AI: tag this + describe your app (options 1/2/3)
+├── frontend/           # Next.js app (UI), used in setup 2 or 3
+├── automation/         # WAT: workflows (markdown) + tools (scripts per workflow)
+├── llm-context/        # Conventions and overviews for AI (frontend, automation, database)
+├── brand.pen           # Optional design source (agent can ask to use it)
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Getting started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone or fork** this repo.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **To have an AI build an app from your idea:**  
+   In your IDE/chat, tag **`@AGENT.md`** and describe what you want (e.g. “Build a daily report app with login”). The agent will ask whether to use `brand.pen`, which setup you want (1: automation only, 2: + frontend, 3: + frontend + database), then update overviews and build following the conventions.
 
-## Learn More
+3. **Run the frontend (if you have one):**
+   ```bash
+   cd frontend && npm install && npm run dev
+   ```
+   Open http://localhost:3000
 
-To learn more about Next.js, take a look at the following resources:
+4. **Run automation:**  
+   See `automation/README.md`. Example: `cd automation && python tools/example_save_date/write_date.py`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. **Database (setup 3 only):**  
+   Create your database (e.g. [Supabase](https://supabase.com)) and add URL + keys to `frontend/.env` and `automation/.env` (see each folder’s `.env.example`). Schema design lives in `llm-context/database/DATABASE_SCHEMA.md`; keep it updated whenever you change the DB.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Env files
 
-## Deploy on Vercel
+Each area has an `.env.example`; copy to `.env` in that folder and fill in values:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **frontend/** — `frontend/.env.example` → `frontend/.env` (API URL, app env; for setup 3 add DB URL and key)
+- **automation/** — `automation/.env.example` → `automation/.env` (e.g. DB URL and key when using setup 3)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech stack
+
+- **Frontend:** Next.js, React, Tailwind, shadcn-style UI, Lucide icons
+- **Automation:** Python (or Node) — workflows in markdown, tools in `tools/<workflow_name>/`
+- **Data & auth (optional):** Supabase (shared by frontend and automation when using setup 3)
+
+---
+
+Use this repo as a base for automation-first or fullstack projects, with or without a database.
